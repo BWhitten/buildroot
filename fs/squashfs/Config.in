@@ -28,10 +28,4 @@ config BR2_TARGET_ROOTFS_SQUASHFS4_XZ
 	bool "xz"
 
 endchoice
-
-config BR2_TARGET_ROOTFS_SQUASHFS_VERITY
-	bool "Generate verity hashtable"
-	help
-	  As squashfs is readonly it is possible to generate a dm-verity
-	  hashtable for use in verified boot systems.
 endif
