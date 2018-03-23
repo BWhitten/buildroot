@@ -1,6 +1,5 @@
 config BR2_TARGET_ROOTFS_UBIFS
 	bool "ubifs root filesystem"
-	depends on BR2_TARGET_ROOTFS_UBI
 	help
 	  Build a ubifs root filesystem
 
