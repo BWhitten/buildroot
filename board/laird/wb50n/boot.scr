@@ -1,0 +1,3 @@
+echo "Hello"
+setenv hash HASH
+setenv salt SALT

@@ -27,15 +27,22 @@ test -x $veritysetup || \
 test -x $genimage || \
 	        die "No genimage found (host-genimage has not been built?)"
 
+# Generate the hash table for squashfs
+$veritysetup format $BINARIES_DIR/rootfs.squashfs $BINARIES_DIR/rootfs.verity > $BINARIES_DIR/rootfs.verity.header
+# Get the hash
+HASH="$(awk '/Root hash:/ {print $3}' $BINARIES_DIR/rootfs.verity.header)"
+SALT="$(awk '/Salt:/ {print $2}' $BINARIES_DIR/rootfs.verity.header)"
+
+# Generate the boot.scr for uboot
+run cp $BOARD_DIR/boot.scr $BINARIES_DIR/boot.scr
+run sed -i -e "s/SALT/${SALT}/g" -e "s/HASH/${HASH}/g" $BINARIES_DIR/boot.scr
+
 # kernel.its references zImage and at91-wb50n.dtb, and all three
 # files must be in current directory for mkimage.
 run cp $BOARD_DIR/kernel.its $BINARIES_DIR/kernel.its || exit 1
 echo "# entering $BINARIES_DIR for the next command"
 (cd $BINARIES_DIR && run $mkimage -f kernel.its kernel.itb) || exit 1
 run rm -f $BINARIES_DIR/kernel.its
-
-# Generate the hash table for squashfs
-$veritysetup format $BINARIES_DIR/rootfs.squashfs $BINARIES_DIR/rootfs.verity > $BINARIES_DIR/rootfs.verity.header
 
 # Build the UBI
 run rm -rf "${GENIMAGE_TMP}"
