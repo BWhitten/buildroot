@@ -61,6 +61,15 @@ config BR2_PACKAGE_LINUX_FIRMWARE_QUALCOMM_6174A_BT
 
 endmenu # Bluetooth
 
+menu "LoRa firmware"
+
+config BR2_PACKAGE_LINUX_FIRMWARE_SEMTECH_SX1301
+	bool "Semtech SX1301 LoRa concentrator"
+	help
+	  Firmware files for the SX1301 LoRa concentrator
+
+endmenu # LoRa
+
 menu "WiFi firmware"
 
 config BR2_PACKAGE_LINUX_FIRMWARE_ATHEROS_6002
