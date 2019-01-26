@@ -99,37 +99,117 @@
             clock-output-names = "clkhs";
         };
 
-	sx1301: sx1301@0 {
+	concentrtor0: lora@0 {
 		compatible = "semtech,sx1301";
 		reg = <0>;
-		#address-cells = <1>;
-		#size-cells = <0>;
 		spi-max-frequency = <8000000>;
 		reset-gpios = <&pioA 26 GPIO_ACTIVE_HIGH>;
-		clocks = <&radio1 0>, <&clkhs 0>;
+		clocks = <&radio1>, <&clkhs>;
 		clock-names = "clk32m", "clkhs";
+
+		power-lut =   [ FD 00 00 03 08
+				00 00 00 03 09
+				03 00 00 03 0C
+				04 00 00 03 0D
+				06 00 01 03 08
+				09 00 01 03 09
+				0A 00 01 03 0A
+				0C 00 01 03 0B
+				0D 00 01 03 0C
+				0E 00 01 03 0D
+				10 00 01 03 0F
+				13 00 02 03 0A
+				15 00 02 03 0B
+				16 00 02 03 0C
+				18 00 02 03 0D
+				19 00 02 03 0E ];
 
 		radio-spi {
 			#address-cells = <1>;
 			#size-cells = <0>;
 
-			radio0: radio-a@0 {
+			radio0: radio@0 {
 				compatible = "semtech,sx1257";
 				spi-max-frequency = <8000000>;
 				reg = <0>;
-				tx;
-				clocks = <&tcxo 0>;
-				clock-names = "tcxo";
+				clocks = <&tcxo>;
+				clock-names = "fosxc";
 			};
 
-			radio1: radio-b@1 {
+			radio1: radio@1 {
 				compatible = "semtech,sx1257";
 				spi-max-frequency = <8000000>;
 				reg = <1>;
 				#clock-cells = <0>;
-				clocks = <&tcxo 0>;
-				clock-names = "tcxo";
+				clocks = <&tcxo>;
+				clock-names = "fosxc";
 				clock-output-names = "clk32m";
+			};
+		};
+	};
+};
+
+&nand_controller {
+	status = "okay";
+
+	nand: nand@3 {
+		reg = <0x3 0x0 0x2>;
+		atmel,rb = <0>;
+		nand-bus-width = <8>;
+		nand-ecc-mode = "hw";
+		nand-ecc-strength = <8>;
+		nand-ecc-step-size = <512>;
+		nand-on-flash-bbt;
+		label = "atmel_nand";
+
+		partitions {
+			compatible = "fixed-partitions";
+			#address-cells = <1>;
+			#size-cells = <1>;
+
+			at91bootstrap@0 {
+				label = "at91bs";
+				reg = <0x0 0x20000>;
+			};
+
+			uboot@20000 {
+				label = "u-boot";
+				reg = <0x20000 0x80000>;
+			};
+
+			ubootenv@a0000 {
+				label = "u-boot-env";
+				reg = <0xa0000 0x20000>;
+			};
+
+			ubootenv@c0000 {
+				label = "u-boot-env2";
+				reg = <0xc0000 0x20000>;
+			};
+
+			kernel-a@e0000 {
+				label = "kernel-a";
+				reg = <0xe0000 0x500000>;
+			};
+
+			kernel-b@5e0000 {
+				label = "kernel-b";
+				reg = <0x5e0000 0x500000>;
+			};
+
+			rootfs-a@ae0000 {
+				label = "rootfs-a";
+				reg = <0xae0000 0x3000000>;
+			};
+
+			rootfs-b@3ae0000 {
+				label = "rootfs-b";
+				reg = <0x3ae0000 0x3000000>;
+			};
+
+			user@6ae0000 {
+				label = "user";
+				reg = <0x6ae0000 0x14e0000>;
 			};
 		};
 	};
